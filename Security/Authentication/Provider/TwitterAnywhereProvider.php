@@ -1,22 +1,21 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the BITTwitterBundle package.
  *
- * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ * (c) bitgandtter <http://bitgandtter.github.com/>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace FOS\TwitterBundle\Security\Authentication\Provider;
+namespace BIT\TwitterBundle\Security\Authentication\Provider;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use FOS\TwitterBundle\Security\Authentication\Token\TwitterAnywhereToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
+use BIT\TwitterBundle\Security\Authentication\Token\TwitterAnywhereToken;
 
 class TwitterAnywhereProvider implements AuthenticationProviderInterface
 {

@@ -1,10 +1,14 @@
 <?php
-/**
- * Created by Amal Raghav <amal.raghav@gmail.com>
- * Date: 05/03/11
- */
 
-namespace FOS\TwitterBundle\Twig\Extension;
+/*
+ * This file is part of the BITTwitterBundle package.
+*
+* (c) bitgandtter <http://bitgandtter.github.com/>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+namespace BIT\TwitterBundle\Twig\Extension;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TwitterAnywhereExtension extends \Twig_Extension

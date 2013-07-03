@@ -1,18 +1,16 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the BITTwitterBundle package.
  *
- * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ * (c) bitgandtter <http://bitgandtter.github.com/>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace FOS\TwitterBundle\Security\Authentication\Provider;
+namespace BIT\TwitterBundle\Security\Authentication\Provider;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use FOS\TwitterBundle\Security\User\UserManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -21,9 +19,9 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\DependencyInjection\Container;
-
-use FOS\TwitterBundle\Security\Authentication\Token\TwitterUserToken;
-use FOS\TwitterBundle\Services\Twitter;
+use BIT\TwitterBundle\Security\User\UserManagerInterface;
+use BIT\TwitterBundle\Security\Authentication\Token\TwitterUserToken;
+use BIT\TwitterBundle\Services\Twitter;
 
 class TwitterProvider implements AuthenticationProviderInterface
 {
@@ -35,16 +33,13 @@ class TwitterProvider implements AuthenticationProviderInterface
   public function __construct( Twitter $twitter, UserProviderInterface $userProvider = null,
       UserCheckerInterface $userChecker = null, $createUserIfNotExists = false )
   {
+    $errorMessage = '$userChecker cannot be null, if $userProvider is not null.';
     if ( null !== $userProvider && null === $userChecker )
-    {
-      throw new \InvalidArgumentException( '$userChecker cannot be null, if $userProvider is not null.');
-    }
+      throw new \InvalidArgumentException( $errorMessage);
     
+    $errorMessage = '$userProvider must be an instanceof UserManagerInterface if createUserIfNotExists is true.';
     if ( $createUserIfNotExists && !$userProvider instanceof UserManagerInterface )
-    {
-      throw new \InvalidArgumentException( 
-          '$userProvider must be an instanceof UserManagerInterface if createUserIfNotExists is true.');
-    }
+      throw new \InvalidArgumentException( $errorMessage);
     
     $this->twitter = $twitter;
     $this->userProvider = $userProvider;
@@ -55,9 +50,7 @@ class TwitterProvider implements AuthenticationProviderInterface
   public function authenticate( TokenInterface $token )
   {
     if ( !$this->supports( $token ) )
-    {
       return null;
-    }
     
     $user = $token->getUser( );
     if ( $user instanceof UserInterface )
