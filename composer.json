@@ -1,25 +1,25 @@
 {
-    "name": "friendsofsymfony/twitter-bundle",
+    "name": "bitgandtter/twitter-bundle",
     "type": "symfony-bundle",
-    "description": "Symfony FOSTwitterBundle",
-    "keywords": ["Twitter authentication"],
-    "homepage": "http://friendsofsymfony.github.com",
+    "description": "Integrate Twitter Services into Symfony 2 app.",
+    "keywords": ["twitter", "user", "contacts"],
+    "homepage": "http://bitgandtter.github.com",
     "license": "MIT",
     "authors": [
         {
-            "name": "FriendsOfSymfony Community",
-            "homepage": "https://github.com/FriendsOfSymfony/FOSTwitterBundle/contributors"
+            "name":"Yasmany Cubela Medina",
+            "email":"yasmanycm@gmail.com"
         }
     ],
     "require": {
         "php": ">=5.3.2",
-        "symfony/framework-bundle": ">=2.1",
-        "symfony/security-bundle": ">=2.1",
-        "symfony/twig-bundle": ">=2.1",
+        "symfony/framework-bundle": ">=2.3",
+        "symfony/security-bundle": ">=2.3",
+        "symfony/twig-bundle": ">=2.3",
         "mynetx/codebird-php": "2.4.1"
     },
     "autoload": {
-        "psr-0": { "FOS\\TwitterBundle": "" }
+        "psr-0": { "BIT\\TwitterBundle": "" }
     },
-    "target-dir": "FOS/TwitterBundle"
+    "target-dir": "BIT/TwitterBundle"
 }

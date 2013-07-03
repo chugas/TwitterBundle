@@ -1,15 +1,14 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the BITTwitterBundle package.
  *
- * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ * (c) bitgandtter <http://bitgandtter.github.com/>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace FOS\TwitterBundle\DependencyInjection\Security\Factory;
+namespace BIT\TwitterBundle\DependencyInjection\Security\Factory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
@@ -31,12 +30,12 @@ class TwitterFactory extends AbstractFactory
   
   public function getKey( )
   {
-    return 'fos_twitter';
+    return 'bit_twitter';
   }
   
   protected function getListenerId( )
   {
-    return 'fos_twitter.security.authentication.listener';
+    return 'bit_twitter.security.authentication.listener';
   }
   
   protected function createAuthProvider( ContainerBuilder $container, $id, $config, $userProviderId )
@@ -46,34 +45,38 @@ class TwitterFactory extends AbstractFactory
     {
       if ( isset( $config[ 'provider' ] ) )
       {
-        $authProviderId = 'fos_twitter.anywhere_auth.' . $id;
+        $authProviderId = 'bit_twitter.anywhere_auth.' . $id;
         
-        $container->setDefinition( $authProviderId, new DefinitionDecorator( 'fos_twitter.anywhere_auth') )
-            ->addArgument( new Reference( $userProviderId) )->addArgument( new Reference( 'security.user_checker') )
-            ->addArgument( $config[ 'create_user_if_not_exists' ] );
+        $definitionDecorator = new DefinitionDecorator( 'bit_twitter.anywhere_auth');
+        $definition = $container->setDefinition( $authProviderId, $definitionDecorator );
+        $definition->addArgument( new Reference( $userProviderId) );
+        $definition->addArgument( new Reference( 'security.user_checker') );
+        $definition->addArgument( $config[ 'create_user_if_not_exists' ] );
         
         return $authProviderId;
       }
       
       // no user provider
-      return 'fos_twitter.anywhere_auth';
+      return 'bit_twitter.anywhere_auth';
     }
     
     // configure auth for standard Twitter API
     // with user provider
     if ( isset( $config[ 'provider' ] ) )
     {
-      $authProviderId = 'fos_twitter.auth.' . $id;
+      $authProviderId = 'bit_twitter.auth.' . $id;
       
-      $container->setDefinition( $authProviderId, new DefinitionDecorator( 'fos_twitter.auth') )
-          ->addArgument( new Reference( $userProviderId) )->addArgument( new Reference( 'security.user_checker') )
-          ->addArgument( $config[ 'create_user_if_not_exists' ] );
+      $definitionDecorator = new DefinitionDecorator( 'bit_twitter.auth');
+      $definition = $container->setDefinition( $authProviderId, $definitionDecorator );
+      $definition->addArgument( new Reference( $userProviderId) );
+      $definition->addArgument( new Reference( 'security.user_checker') );
+      $definition->addArgument( $config[ 'create_user_if_not_exists' ] );
       
       return $authProviderId;
     }
     
     // without user provider
-    return 'fos_twitter.auth';
+    return 'bit_twitter.auth';
   }
   
   protected function createListener( $container, $id, $config, $userProvider )
@@ -81,18 +84,16 @@ class TwitterFactory extends AbstractFactory
     $listenerId = parent::createListener( $container, $id, $config, $userProvider );
     
     if ( $config[ 'use_twitter_anywhere' ] )
-    {
       $container->getDefinition( $listenerId )->addMethodCall( 'setUseTwitterAnywhere', array( true ) );
-    }
     
     return $listenerId;
   }
   
   protected function createEntryPoint( $container, $id, $config, $defaultEntryPointId )
   {
-    $entryPointId = 'fos_twitter.security.authentication.entry_point.' . $id;
-    $container
-        ->setDefinition( $entryPointId, new DefinitionDecorator( 'fos_twitter.security.authentication.entry_point') );
+    $entryPointId = 'bit_twitter.security.authentication.entry_point.' . $id;
+    $definitionDecorator = new DefinitionDecorator( 'bit_twitter.security.authentication.entry_point');
+    $container->setDefinition( $entryPointId, $definitionDecorator );
     
     return $entryPointId;
   }
