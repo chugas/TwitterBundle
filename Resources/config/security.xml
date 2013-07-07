@@ -8,13 +8,13 @@
 		<service id="bit_twitter.auth"
 			class="BIT\TwitterBundle\Security\Authentication\Provider\TwitterProvider"
 			public="false">
-			<argument type="service" id="bit_twitter.service" />
+			<argument /> <!-- Provider-shared Key -->
+			<argument type="service" id="bit_twitter.api" />
 		</service>
 
-		<service id="bit_twitter.anywhere_auth"
-			class="BIT\TwitterBundle\Security\Authentication\Provider\TwitterAnywhereProvider"
+		<service id="bit_twitter.logout_handler" class="BIT\TwitterBundle\Security\Logout\TwitterHandler"
 			public="false">
-			<argument>%bit_twitter.consumer_secret%</argument>
+			<argument type="service" id="bit_twitter.api" />
 		</service>
 
 		<service id="bit_twitter.security.authentication.listener"
@@ -25,8 +25,7 @@
 		<service id="bit_twitter.security.authentication.entry_point"
 			class="BIT\TwitterBundle\Security\EntryPoint\TwitterAuthenticationEntryPoint"
 			public="false" abstract="true">
-			<argument type="service" id="bit_twitter.service" />
+			<argument type="service" id="bit_twitter.api" />
 		</service>
-
 	</services>
 </container>

@@ -4,64 +4,30 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-	<parameters>
-		<parameter key="bit_twitter.file">null</parameter>
-		<parameter key="bit_twitter.consumer_key">null</parameter>
-		<parameter key="bit_twitter.consumer_secret">null</parameter>
-		<parameter key="bit_twitter.access_token">null</parameter>
-		<parameter key="bit_twitter.access_token_secret">null</parameter>
-		<parameter key="bit_twitter.callback_url">null</parameter>
-		<parameter key="bit_twitter.anywhere_version">1</parameter>
-
-		<parameter key="bit_twitter.anywhere.helper.class">BIT\TwitterBundle\Templating\Helper\TwitterAnywhereHelper</parameter>
-		<parameter key="bit_twitter.anywhere.twig.class">BIT\TwitterBundle\Twig\Extension\TwitterAnywhereExtension</parameter>
-		
-		<parameter key="bit_twitter.twitter.helper.class">BIT\TwitterBundle\Templating\Helper\TwitterHelper</parameter>
-    <parameter key="bit_twitter.twitter.twig.class">BIT\TwitterBundle\Twig\Extension\TwitterExtension</parameter>
-
-		<parameter key="bit_twitter.api.class">TwitterOAuth</parameter>
-		<parameter key="bit_twitter.service.class">BIT\TwitterBundle\Services\Twitter</parameter>
-	</parameters>
-
 	<services>
-		<service id="bit_twitter.service" class="%bit_twitter.service.class%">
-			<argument type="service" id="bit_twitter.api" />
-			<argument type="service" id="session" />
-			<argument key="callback_url">%bit_twitter.callback_url%</argument>
-		</service>
 
-		<!-- This is the base API connect service, injected to the wrapper service -->
 		<service id="bit_twitter.api" class="%bit_twitter.api.class%">
-			<file>%bit_twitter.file%</file>
-			<argument key="consumer_key">%bit_twitter.consumer_key%</argument>
-			<argument key="consumer_secret">%bit_twitter.consumer_secret%</argument>
-			<argument key="oauth_token">%bit_twitter.access_token%</argument>
-			<argument key="oauth_token_secret">%bit_twitter.access_token_secret%</argument>
+			<argument type="collection">
+				<argument key="app_name">%bit_twitter.app_name%</argument>
+				<argument key="client_id">%bit_twitter.client_id%</argument>
+				<argument key="client_secret">%bit_twitter.client_secret%</argument>
+				<argument key="state">%bit_twitter.state%</argument>
+				<argument key="access_type">%bit_twitter.access_type%</argument>
+				<argument key="scopes">%bit_twitter.scopes%</argument>
+				<argument key="approval_prompt">%bit_twitter.approval_prompt%</argument>
+				<argument key="callback_url">%bit_twitter.callback_url%</argument>
+			</argument>
+			<argument type="service" id="session" />
 		</service>
-
-		<!-- @Anywhere Templating Helper -->
-		<service id="bit_twitter.anywhere.helper" class="%bit_twitter.anywhere.helper.class%">
+		<service id="bit_twitter.helper" class="%bit_twitter.helper.class%">
 			<argument type="service" id="templating" />
-			<argument>%bit_twitter.consumer_key%</argument>
-			<argument>%bit_twitter.anywhere_version%</argument>
-			<tag name="templating.helper" alias="twitter_anywhere" />
+			<argument type="service" id="bit_twitter.api" />
+			<tag name="templating.helper" alias="google" />
 		</service>
-
-		<service id="bit_twitter.anywhere.twig" class="%bit_twitter.anywhere.twig.class%">
+		<service id="bit_twitter.twig" class="%bit_twitter.twig.class%">
 			<argument type="service" id="service_container" />
 			<tag name="twig.extension" />
 		</service>
-		
-		<!-- @Twitter Templating Helper -->
-    <service id="bit_twitter.twitter.helper" class="%bit_twitter.twitter.helper.class%">
-      <argument type="service" id="bit_twitter.service" />
-      <tag name="templating.helper" alias="twitter" />
-    </service>
-
-    <service id="bit_twitter.twitter.twig" class="%bit_twitter.twitter.twig.class%">
-      <argument type="service" id="service_container" />
-      <tag name="twig.extension" />
-    </service>
 
 	</services>
 </container>

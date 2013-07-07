@@ -25,26 +25,21 @@ class Configuration implements ConfigurationInterface
     $treeBuilder = new TreeBuilder( );
     $rootNode = $treeBuilder->root( 'bit_twitter' );
     
-    $rootNode->validate( )
-        ->always( 
-            function ($v)
-            {
-              if ( !empty( $v[ 'callback_url' ] ) && !empty( $v[ 'callback_route' ] ) )
-              {
-                throw new \Exception( 'You cannot configure a "callback_url", and a "callback_route" at the same time.');
-              }
-              
-              return $v;
-            } )->end( )->children( )->scalarNode( 'file' )
-        ->defaultValue( '%kernel.root_dir%/../vendor/twitteroauth/twitteroauth/twitteroauth.php' )->end( )
-        ->scalarNode( 'consumer_key' )->isRequired( )->cannotBeEmpty( )->end( )->scalarNode( 'consumer_secret' )
-        ->isRequired( )->cannotBeEmpty( )->end( )->scalarNode( 'access_token' )->defaultNull( )->end( )
-        ->scalarNode( 'access_token_secret' )->defaultNull( )->end( )->scalarNode( 'callback_url' )->defaultNull( )
-        ->end( )->scalarNode( 'callback_route' )->defaultNull( )->end( )->scalarNode( 'anywhere_version' )
-        ->defaultValue( '1' )->end( )->scalarNode( 'alias' )->defaultNull( )->end( )->end( );
+    $rootNode->children( )// childrens
+        ->scalarNode( 'consumer_key' )->isRequired( )->cannotBeEmpty( )->end( ) // consumer key
+        ->scalarNode( 'consumer_secret' )->isRequired( )->cannotBeEmpty( )->end( ) // consumer secret
+        ->scalarNode( 'access_token' )->defaultNull( )->end( ) // access_token
+        ->scalarNode( 'access_token_secret' )->defaultNull( )->end( ) // access_token_secret
+        ->scalarNode( 'callback_url' )->defaultNull( )->end( ) // calback url
+        ->scalarNode( 'callback_route' )->defaultNull( )->end( ) // callback route
+        ->scalarNode( 'alias' )->defaultNull( )->end( ) // alias
+        ->arrayNode( 'class' )->addDefaultsIfNotSet( )->children( ) // clasess
+        ->scalarNode( 'api' )->defaultValue( 'BIT\TwitterBundle\Twitter\TwitterSessionPersistence' )->end( ) // api
+        ->scalarNode( 'helper' )->defaultValue( 'BIT\TwitterBundle\Templating\Helper\TwitterHelper' )->end( ) // template helper
+        ->scalarNode( 'twig' )->defaultValue( 'BIT\TwitterBundle\Twig\Extension\TwitterExtension' )->end( ) // twig ext
+        ->end( ) // end clasess
+        ->end( )->end( );
     
     return $treeBuilder;
   }
-  
 }
-

@@ -8,8 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace BIT\TwitterBundle\DependencyInjection;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
@@ -18,7 +18,7 @@ use Symfony\Component\Config\FileLocator;
 
 class BITTwitterExtension extends Extension
 {
-  protected $resources = array( 'twitter' => 'twitter.xml', 'security' => 'security.xml', );
+  protected $resources = array( 'google' => 'google.xml', 'security' => 'security.xml' );
   
   public function load( array $configs, ContainerBuilder $container )
   {
@@ -29,25 +29,27 @@ class BITTwitterExtension extends Extension
     $this->loadDefaults( $container );
     
     if ( isset( $config[ 'alias' ] ) )
-      $container->setAlias( $config[ 'alias' ], 'bit_twitter.service' );
+      $container->setAlias( $config[ 'alias' ], 'bit_twitter.api' );
     
-    $attributes = array( 'file', 'consumer_key', 'consumer_secret', 'callback_url', 'access_token',
-        'access_token_secret', 'anywhere_version' );
-    foreach ( $attributes as $attribute )
-      if ( isset( $config[ $attribute ] ) )
-        $container->setParameter( 'bit_twitter.' . $attribute, $config[ $attribute ] );
+    foreach ( array( 'api', 'helper', 'twig' ) as $attribute )
+      $container->setParameter( 'bit_twitter.' . $attribute . '.class', $config[ 'class' ][ $attribute ] );
     
-    if ( !empty( $config[ 'callback_route' ] ) )
-      $container->getDefinition( 'bit_twitter.service' )
-          ->addMethodCall( 'setCallbackRoute', array( new Reference( 'router'), $config[ 'callback_route' ], ) );
+    foreach ( array( 'app_name', 'client_id', 'client_secret', 'state', 'access_type', 'approval_prompt', 'scopes' ) as $attribute )
+      $container->setParameter( 'bit_twitter.' . $attribute, $config[ $attribute ] );
+    
+    /* if ( array_key_exists( 'callback_route', $config ) )
+      $container->setParameter( 'fos_twitter.' . $attribute, $config['callback_route'] );
+    else */
+    $container->setParameter( 'bit_twitter.callback_url', $config[ 'callback_url' ] );
   }
   
   protected function loadDefaults( $container )
   {
-    $loader = new XmlFileLoader( $container,
-        new FileLocator( array( __DIR__ . '/../Resources/config', __DIR__ . '/Resources/config' )));
+    $loader = new XmlFileLoader( $container, new FileLocator( __DIR__ . '/../Resources/config'));
     
     foreach ( $this->resources as $resource )
+    {
       $loader->load( $resource );
+    }
   }
 }

@@ -1,42 +1,30 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the BITTwitterBundle package.
  *
- * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ * (c) bitgandtter <http://bitgandtter.github.com/>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace FOS\TwitterBundle\Security\Authentication\Token;
+namespace BIT\TwitterBundle\Security\Authentication\Token;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
 class TwitterUserToken extends AbstractToken
 {
-  private $oauthVerifier;
+  private $providerKey;
   
-  public function __construct( $uid = '', $oauthVerifier, array $roles = array( ) )
+  public function __construct( $providerKey, $uid = '', array $roles = array( ) )
   {
     parent::__construct( $roles );
     
-    $this->oauthVerifier = $oauthVerifier;
     $this->setUser( $uid );
     
-    if ( !empty( $roles ) )
-    {
-      parent::setAuthenticated( true );
-    }
-  }
-  
-  public function setAuthenticated( $bool )
-  {
-    if ( $bool )
-    {
-      throw new \LogicException( 'TwitterUserToken may not be set to authenticated after creation.');
-    }
+    if ( !empty( $uid ) )
+      $this->setAuthenticated( true );
     
-    parent::setAuthenticated( false );
+    $this->providerKey = $providerKey;
   }
   
   public function getCredentials( )
@@ -44,19 +32,19 @@ class TwitterUserToken extends AbstractToken
     return '';
   }
   
-  public function getOauthVerifier( )
+  public function getProviderKey( )
   {
-    return $this->oauthVerifier;
+    return $this->providerKey;
   }
   
   public function serialize( )
   {
-    return serialize( array( $this->oauthVerifier, parent::serialize( ), ) );
+    return serialize( array( $this->providerKey, parent::serialize( ) ) );
   }
   
   public function unserialize( $str )
   {
-    list($this->oauthVerifier, $parentStr) = unserialize( $str );
+    list($this->providerKey, $parentStr) = unserialize( $str );
     parent::unserialize( $parentStr );
   }
 }

@@ -1,58 +1,28 @@
 <?php
 
 /*
- * This file is part of the FOSTwitterBundle package.
+ * This file is part of the BITTwitterBundle package.
  *
- * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ * (c) bitgandtter <http://bitgandtter.github.com/>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace FOS\TwitterBundle\Security\Firewall;
-use FOS\TwitterBundle\Security\Authentication\Token\TwitterAnywhereToken;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use FOS\TwitterBundle\Security\Authentication\Token\TwitterUserToken;
+namespace BIT\TwitterBundle\Security\Firewall;
 use Symfony\Component\Security\Http\Firewall\AbstractAuthenticationListener;
 use Symfony\Component\HttpFoundation\Request;
+use BIT\TwitterBundle\Security\Authentication\Token\TwitterUserToken;
 
 /**
  * Twitter authentication listener.
  */
 class TwitterListener extends AbstractAuthenticationListener
 {
-  private $useTwitterAnywhere = false;
-  
-  public function setUseTwitterAnywhere( $bool )
-  {
-    $this->useTwitterAnywhere = ( Boolean ) $bool;
-  }
   
   protected function attemptAuthentication( Request $request )
   {
-    if ( $request->get( "oauth_token" ) && $request->get( "oauth_verifier" ) )
-    {
-      if ( $this->useTwitterAnywhere )
-      {
-        if ( null === $identity = $request->cookies->get( 'twitter_anywhere_identity' ) )
-        {
-          throw new AuthenticationException( sprintf( 'Identity cookie "twitter_anywhere_identity" was not sent.' ));
-        }
-        if ( false === $pos = strpos( $identity, ':' ) )
-        {
-          throw new AuthenticationException( sprintf( 'The submitted identity "%s" is invalid.', $identity ));
-        }
-        
-        return $this->authenticationManager
-            ->authenticate( 
-                TwitterAnywhereToken::createUnauthenticated( substr( $identity, 0, $pos ),
-                    substr( $identity, $pos + 1 ) ) );
-      }
-      
-      return $this->authenticationManager
-          ->authenticate( 
-              new TwitterUserToken( $request->query->get( 'oauth_token' ), $request->query->get( 'oauth_verifier' )) );
-    }
+    if ( $request->get( "twitter", null ) )
+      return $this->authenticationManager->authenticate( new TwitterUserToken( $this->providerKey) );
     return null;
   }
 }
