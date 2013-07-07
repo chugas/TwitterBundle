@@ -9,13 +9,8 @@
  * file that was distributed with this source code.
  */
 namespace BIT\TwitterBundle\Security\Authentication\Provider;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserCheckerInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use BIT\TwitterBundle\Security\User\UserManagerInterface;
 use BIT\TwitterBundle\Security\Authentication\Token\TwitterUserToken;
 
