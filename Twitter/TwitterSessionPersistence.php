@@ -11,49 +11,58 @@
 namespace BIT\TwitterBundle\Twitter;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Twitter_Client;
-use Twitter_Oauth2Service as Service;
+use Codebird\Codebird;
 
 /**
  * Implements Symfony2 session persistence for Twitter.
  *
  */
-class TwitterSessionPersistence extends Twitter_Client
+class TwitterSessionPersistence extends Codebird
 {
   const PREFIX = '_bit_twitter_';
   
-  private $oauth;
   private $session;
   private $prefix;
-  protected static $kSupportedKeys = array( 'state', 'code', 'access_token', 'user_id' );
+  private $config;
   
   public function __construct( $config, Session $session, $prefix = self::PREFIX )
   {
-    parent::__construct( $config );
+    Codebird::setConsumerKey( $config[ 'consumer_key' ], $config[ 'consumer_secret' ] );
     
-    $this->setApplicationName( $config[ "app_name" ] );
-    $this->setClientId( $config[ "client_id" ] );
-    $this->setClientSecret( $config[ "client_secret" ] );
-    $this->setRedirectUri( $config[ "callback_url" ] );
-    
-    $scopes = array( );
-    foreach ( $config[ "scopes" ] as $scope )
-      $scopes[ ] = "https://www.twitterapis.com/auth/" . $scope;
-    
-    $this->setScopes( $scopes );
-    $this->setState( $config[ "state" ] );
-    $this->setAccessType( $config[ "access_type" ] );
-    $this->setApprovalPrompt( $config[ "approval_prompt" ] );
-    $this->oauth = new Service( $this);
-    
+    $this->config = $config;
     $this->session = $session;
     $this->prefix = $prefix;
     $this->session->start( );
   }
   
-  public function getOAuth( )
+  public function getAuthorizeUrl( )
   {
-    return $this->oauth;
+    // get the request token
+    $reply = $this->oauth_requestToken( array( 'oauth_callback' => $this->config[ 'callback_url' ] ) );
+    
+    // store the token
+    $this->setToken( $reply->oauth_token, $reply->oauth_token_secret );
+    $this->session->set( 'oauth_token', $reply->oauth_token );
+    $this->session->set( 'oauth_token_secret', $reply->oauth_token_secret );
+    $this->session->set( 'oauth_verify', true );
+    
+    return $this->oauth_authorize( );
+  }
+  
+  public function authenticate( )
+  {
+    // verify the token
+    $this->setToken( $this->session->get( 'oauth_token' ), $this->session->get( 'oauth_token_secret' ) );
+    $this->session->remove( 'oauth_verify' );
+    
+    // get the access token
+    $reply = $this->oauth_accessToken( array( 'oauth_verifier' => $this->session->get( 'oauth_verifier' ) ) );
+    
+    // store the token (which is different from the request token!)
+    $this->session->set( 'oauth_token', $reply->oauth_token );
+    $this->session->set( 'oauth_token_secret', $reply->oauth_token_secret );
+    
+    $this->setToken( $reply->oauth_token, $reply->oauth_token_secret );
   }
   
   /**

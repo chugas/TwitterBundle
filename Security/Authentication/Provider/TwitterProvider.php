@@ -9,6 +9,11 @@
  * file that was distributed with this source code.
  */
 namespace BIT\TwitterBundle\Security\Authentication\Provider;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+
+use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use BIT\TwitterBundle\Security\User\UserManagerInterface;
@@ -16,14 +21,15 @@ use BIT\TwitterBundle\Security\Authentication\Token\TwitterUserToken;
 
 class TwitterProvider implements AuthenticationProviderInterface
 {
-  protected $twitterApi;
+  protected $twitter;
   protected $providerKey;
   protected $userProvider;
   protected $userChecker;
   protected $createIfNotExists;
+  private $oauth_verifier;
   
-  public function __construct( $providerKey, $twitterApi, UserProviderInterface $userProvider = null,
-      UserCheckerInterface $userChecker = null, $createIfNotExists = false )
+  public function __construct( $providerKey, $twitter, $userProvider = null, $userChecker = null,
+      $createIfNotExists = false )
   {
     $errorMessage = '$userChecker cannot be null, if $userProvider is not null.';
     if ( null !== $userProvider && null === $userChecker )
@@ -34,7 +40,7 @@ class TwitterProvider implements AuthenticationProviderInterface
       throw new \InvalidArgumentException( $errorMessage);
     
     $this->providerKey = $providerKey;
-    $this->twitterApi = $twitterApi;
+    $this->twitter = $twitter;
     $this->userProvider = $userProvider;
     $this->userChecker = $userChecker;
     $this->createIfNotExists = $createIfNotExists;
@@ -45,8 +51,7 @@ class TwitterProvider implements AuthenticationProviderInterface
     if ( !$this->supports( $token ) )
       return null;
     
-    $this->twitterApi->authenticate( );
-    $this->twitterApi->setAccessToken( $this->twitterApi->getAccessToken( ) );
+    $this->twitter->authenticate( );
     
     $user = $token->getUser( );
     
@@ -62,8 +67,8 @@ class TwitterProvider implements AuthenticationProviderInterface
     
     try
     {
-      $userData = $this->twitterApi->getOAuth( )->userinfo->get( );
-      if ( $uid = $userData[ "id" ] )
+      $userData = $this->twitter->account_verifyCredentials( );
+      if ( $uid = $userData->id )
       {
         $newToken = $this->createAuthenticatedToken( $uid );
         $newToken->setAttributes( $token->getAttributes( ) );

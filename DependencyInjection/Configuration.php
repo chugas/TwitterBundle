@@ -32,7 +32,6 @@ class Configuration implements ConfigurationInterface
         ->scalarNode( 'access_token_secret' )->defaultNull( )->end( ) // access_token_secret
         ->scalarNode( 'callback_url' )->defaultNull( )->end( ) // calback url
         ->scalarNode( 'callback_route' )->defaultNull( )->end( ) // callback route
-        ->scalarNode( 'alias' )->defaultNull( )->end( ) // alias
         ->arrayNode( 'class' )->addDefaultsIfNotSet( )->children( ) // clasess
         ->scalarNode( 'api' )->defaultValue( 'BIT\TwitterBundle\Twitter\TwitterSessionPersistence' )->end( ) // api
         ->scalarNode( 'helper' )->defaultValue( 'BIT\TwitterBundle\Templating\Helper\TwitterHelper' )->end( ) // template helper

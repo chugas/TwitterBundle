@@ -8,21 +8,19 @@
 
 		<service id="bit_twitter.api" class="%bit_twitter.api.class%">
 			<argument type="collection">
-				<argument key="app_name">%bit_twitter.app_name%</argument>
-				<argument key="client_id">%bit_twitter.client_id%</argument>
-				<argument key="client_secret">%bit_twitter.client_secret%</argument>
-				<argument key="state">%bit_twitter.state%</argument>
-				<argument key="access_type">%bit_twitter.access_type%</argument>
-				<argument key="scopes">%bit_twitter.scopes%</argument>
-				<argument key="approval_prompt">%bit_twitter.approval_prompt%</argument>
+				<argument key="consumer_key">%bit_twitter.consumer_key%</argument>
+				<argument key="consumer_secret">%bit_twitter.consumer_secret%</argument>
+				<argument key="access_token">%bit_twitter.access_token%</argument>
+				<argument key="access_token_secret">%bit_twitter.access_token_secret%</argument>
 				<argument key="callback_url">%bit_twitter.callback_url%</argument>
+				<argument key="callback_route">%bit_twitter.callback_route%</argument>
 			</argument>
 			<argument type="service" id="session" />
 		</service>
 		<service id="bit_twitter.helper" class="%bit_twitter.helper.class%">
 			<argument type="service" id="templating" />
 			<argument type="service" id="bit_twitter.api" />
-			<tag name="templating.helper" alias="google" />
+			<tag name="templating.helper" alias="twitter" />
 		</service>
 		<service id="bit_twitter.twig" class="%bit_twitter.twig.class%">
 			<argument type="service" id="service_container" />

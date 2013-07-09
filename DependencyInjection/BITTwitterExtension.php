@@ -18,7 +18,6 @@ use Symfony\Component\Config\FileLocator;
 
 class BITTwitterExtension extends Extension
 {
-  protected $resources = array( 'google' => 'google.xml', 'security' => 'security.xml' );
   
   public function load( array $configs, ContainerBuilder $container )
   {
@@ -28,26 +27,19 @@ class BITTwitterExtension extends Extension
     
     $this->loadDefaults( $container );
     
-    if ( isset( $config[ 'alias' ] ) )
-      $container->setAlias( $config[ 'alias' ], 'bit_twitter.api' );
-    
     foreach ( array( 'api', 'helper', 'twig' ) as $attribute )
       $container->setParameter( 'bit_twitter.' . $attribute . '.class', $config[ 'class' ][ $attribute ] );
     
-    foreach ( array( 'app_name', 'client_id', 'client_secret', 'state', 'access_type', 'approval_prompt', 'scopes' ) as $attribute )
+    foreach ( array( 'consumer_key', 'consumer_secret', 'access_token', 'access_token_secret', 'callback_url',
+        'callback_route' ) as $attribute )
       $container->setParameter( 'bit_twitter.' . $attribute, $config[ $attribute ] );
-    
-    /* if ( array_key_exists( 'callback_route', $config ) )
-      $container->setParameter( 'fos_twitter.' . $attribute, $config['callback_route'] );
-    else */
-    $container->setParameter( 'bit_twitter.callback_url', $config[ 'callback_url' ] );
   }
   
   protected function loadDefaults( $container )
   {
     $loader = new XmlFileLoader( $container, new FileLocator( __DIR__ . '/../Resources/config'));
     
-    foreach ( $this->resources as $resource )
+    foreach ( array( 'twitter' => 'twitter.xml', 'security' => 'security.xml' ) as $resource )
     {
       $loader->load( $resource );
     }

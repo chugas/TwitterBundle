@@ -11,14 +11,13 @@
 namespace BIT\TwitterBundle\Templating\Helper;
 use Symfony\Component\Templating\Helper\Helper;
 use Symfony\Component\Templating\EngineInterface;
-use Twitter_Client;
 
 class TwitterHelper extends Helper
 {
   protected $templating;
   protected $twitter;
   
-  public function __construct( EngineInterface $templating, Twitter_Client $twitter )
+  public function __construct( EngineInterface $templating, $twitter )
   {
     $this->templating = $templating;
     $this->twitter = $twitter;
@@ -31,7 +30,7 @@ class TwitterHelper extends Helper
   
   public function loginUrl( )
   {
-    return $this->twitter->createAuthUrl( );
+    return $this->twitter->getAuthorizeUrl( );
   }
   
   public function getName( )
