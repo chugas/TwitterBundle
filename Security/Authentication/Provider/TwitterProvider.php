@@ -10,14 +10,15 @@
  */
 namespace BIT\TwitterBundle\Security\Authentication\Provider;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\User\UserChecker;
 use BIT\TwitterBundle\Security\User\UserManagerInterface;
 use BIT\TwitterBundle\Security\Authentication\Token\TwitterUserToken;
+use BIT\TwitterBundle\Twitter\TwitterSessionPersistence;
 
 class TwitterProvider implements AuthenticationProviderInterface
 {
@@ -28,8 +29,8 @@ class TwitterProvider implements AuthenticationProviderInterface
   protected $createIfNotExists;
   private $oauth_verifier;
   
-  public function __construct( $providerKey, $twitter, $userProvider = null, $userChecker = null,
-      $createIfNotExists = false )
+  public function __construct( $providerKey, TwitterSessionPersistence $twitter,
+      UserProviderInterface $userProvider = null, UserChecker $userChecker = null, $createIfNotExists = false )
   {
     $errorMessage = '$userChecker cannot be null, if $userProvider is not null.';
     if ( null !== $userProvider && null === $userChecker )

@@ -25,7 +25,7 @@ class TwitterSessionPersistence extends Codebird
   private $prefix;
   private $config;
   
-  public function __construct( $config, Session $session, $prefix = self::PREFIX )
+  public function __construct( Array $config, Session $session, $prefix = self::PREFIX )
   {
     Codebird::setConsumerKey( $config[ 'consumer_key' ], $config[ 'consumer_secret' ] );
     
@@ -40,13 +40,20 @@ class TwitterSessionPersistence extends Codebird
     // get the request token
     $reply = $this->oauth_requestToken( array( 'oauth_callback' => $this->config[ 'callback_url' ] ) );
     
-    // store the token
-    $this->setToken( $reply->oauth_token, $reply->oauth_token_secret );
-    $this->session->set( 'oauth_token', $reply->oauth_token );
-    $this->session->set( 'oauth_token_secret', $reply->oauth_token_secret );
-    $this->session->set( 'oauth_verify', true );
-    
-    return $this->oauth_authorize( );
+    try
+    {
+      // store the token
+      $this->setToken( $reply->oauth_token, $reply->oauth_token_secret );
+      $this->session->set( 'oauth_token', $reply->oauth_token );
+      $this->session->set( 'oauth_token_secret', $reply->oauth_token_secret );
+      $this->session->set( 'oauth_verify', true );
+      
+      return $this->oauth_authorize( );
+    }
+    catch ( \Exception $e )
+    {
+      return null;
+    }
   }
   
   public function authenticate( )
