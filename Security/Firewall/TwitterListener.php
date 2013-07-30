@@ -21,11 +21,7 @@ class TwitterListener extends AbstractAuthenticationListener
   
   protected function attemptAuthentication( Request $request )
   {
-    if ( $request->get( "twitter", null ) )
-    {
-      $request->getSession( )->set( "oauth_verifier", $request->get( "oauth_verifier" ) );
-      return $this->authenticationManager->authenticate( new TwitterUserToken( $this->providerKey) );
-    }
-    return null;
+    $request->getSession( )->set( "oauth_verifier", $request->get( "oauth_verifier" ) );
+    return $this->authenticationManager->authenticate( new TwitterUserToken( $this->providerKey) );
   }
 }

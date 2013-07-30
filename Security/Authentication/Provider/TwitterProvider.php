@@ -51,23 +51,22 @@ class TwitterProvider implements AuthenticationProviderInterface
   {
     if ( !$this->supports( $token ) )
       return null;
-    
-    $this->twitter->authenticate( );
-    
-    $user = $token->getUser( );
-    
-    if ( $user instanceof UserInterface )
-    {
-      $this->userChecker->checkPostAuth( $user );
-      
-      $newToken = new TwitterUserToken( $this->providerKey, $user, $user->getRoles( ));
-      $newToken->setAttributes( $token->getAttributes( ) );
-      
-      return $newToken;
-    }
-    
     try
     {
+      $this->twitter->authenticate( );
+      
+      $user = $token->getUser( );
+      
+      if ( $user instanceof UserInterface )
+      {
+        $this->userChecker->checkPostAuth( $user );
+        
+        $newToken = new TwitterUserToken( $this->providerKey, $user, $user->getRoles( ));
+        $newToken->setAttributes( $token->getAttributes( ) );
+        
+        return $newToken;
+      }
+      
       $userData = $this->twitter->account_verifyCredentials( );
       if ( $uid = $userData->id )
       {
